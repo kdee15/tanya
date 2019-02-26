@@ -398,8 +398,63 @@ function initScrollFunctions() {
 
   // A.1. END ---------------------------------------------
 
+  // A.2. SCROLL INTO OUT OF VIEW -------------------------
+
+  $.fn.offScreen = function(distance) {
+
+    var $t = $(this),
+      $w				    = $(window),
+      viewTop			  = $w.scrollTop(),
+      viewBottom		= viewTop + $w.height(),
+      _top			    = $t.offset().top - distance,
+      _bottom		    = $t.offset().top + $t.height() + distance;
+
+    return {
+      top: _bottom <= viewTop,
+      bottom: _top >= viewBottom
+    }
+
+  };
+
+  var win = $(window);
+  var allMods = $(".a-slide-h");
+
+  allMods.each(function(i, el) {
+    var el = $(el);
+    if (!el.offScreen(150).bottom) {
+      el.addClass("a-vis-on");
+    }
+  });
+
+  win.on("scroll resize",function(event)
+  {
+    allMods.each(function(i, el) {
+      var el = $(el);
+      if (!el.offScreen(150).top && !el.offScreen(150).bottom)
+      {
+        el.removeClass("a-vis-on a-scrn-t a-scrn-b");
+        el.addClass("a-vis");
+      }
+      else
+      {
+        if(el.offScreen(150).top)
+        {
+          el.addClass("a-scrn-t");
+        }
+        else
+        {
+          el.addClass("a-scrn-b");
+        }
+      }
+    });//allMods.each()
+
+  });//win.scroll()
+
+  win.trigger("scroll");
+
+  // A.2. END ---------------------------------------------
+
 }
-    
 
 // A. END +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // JAVASCRIPT LAYER [APP.JS]  =========================================================================================
